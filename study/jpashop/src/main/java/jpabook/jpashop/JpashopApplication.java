@@ -12,7 +12,7 @@ public class JpashopApplication {
 		hello.setData("hello");
 		String data = hello.getData();
 
-		System.out.println(data);
+		// System.out.println(data);
 		SpringApplication.run(JpashopApplication.class, args);
 	}
 
