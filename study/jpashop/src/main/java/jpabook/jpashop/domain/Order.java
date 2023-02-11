@@ -1,0 +1,38 @@
+package jpabook.jpashop.domain;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.*;
+
+@Entity
+@Table(name="orders")
+@Getter
+@Setter
+public class Order {
+    @Id @GeneratedValue
+    @Column(name="order_id")
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name="member_id")
+    private Member member;
+
+    @OneToMany(mappedBy = "order")
+    private List<OrderItem> orderItems = new ArrayList<>();
+
+    @OneToOne
+    @JoinColumn(name="delivery_id")
+    private Delevery delivery;
+
+    private LocalDateTime orderDate; // 주문시간
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status; // 주문의 상태 (ORDER, CANCEL)
+
+
+
+
+}
