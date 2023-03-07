@@ -1,6 +1,5 @@
 package jpabook.jpashop.domain.item;
 
-
 import jpabook.jpashop.domain.Category;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE) // joined : 정규화된 스타일 single table : 한 테이블에 다 때려넣기
-@DiscriminatorColumn(name="dtype")
-@Getter@Setter
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "dtype")
+@Getter @Setter
 public abstract class Item {
 
     @Id @GeneratedValue
@@ -25,10 +24,7 @@ public abstract class Item {
 
     private int stockQuantity;
 
-    @ManyToMany(mappedBy = "items")
+    @ManyToMany
     private List<Category> categories = new ArrayList<>();
-
-
-
 
 }
