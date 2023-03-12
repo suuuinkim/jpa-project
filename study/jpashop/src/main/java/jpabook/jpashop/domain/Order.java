@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static javax.persistence.FetchType.*;
+
 @Entity
 @Table(name = "orders")
 @Getter @Setter
@@ -17,14 +19,14 @@ public class Order {
     @Column(name = "order_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member; // 연관관계의 주인
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL) // 자주사용하는 테이블에 FK를 넣기
+    @OneToOne(fetch = LAZY, cascade = CascadeType.ALL) // 자주사용하는 테이블에 FK를 넣기
     @JoinColumn(name = "delivery_id")
     private Delivery delivery;
 
