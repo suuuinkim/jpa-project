@@ -10,12 +10,50 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+import javax.xml.transform.Result;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
 public class MemberApiController {
     private final MemberService memberService;
 
+    /**
+     * 엔티티를 직접 반환 하면 안됨
+     */
+    @GetMapping("/api/v1/members")
+    public List<Member> membersV1(){
+        return memberService.findMembers();
+    }
+
+
+    /**
+     * api 스펙에 맞는 DTO를 만들자
+     * 한번 감싸서 반환하기 때문에 유연성이 생긴다
+     */
+    @GetMapping("/api/v2/members")
+    public Result membersV2(){
+        List<Member> findMembers = memberService.findMembers();
+        List<MemberDto> collect = findMembers.stream()
+                .map(m -> new MemberDto(m.getName()))
+                .collect(Collectors.toList());
+
+        return new Result(collect.size(), collect);
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class Result<T>{
+        private int count;
+        private T data;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class MemberDto{
+        private String name;
+    }
     /**
      * api를 만들때는 엔티티를 파라미터로 받지 말자
      */
@@ -49,6 +87,7 @@ public class MemberApiController {
         return new UpdateMemberResponse(findMember.getId(), findMember.getName());
 
     }
+
 
     @Data
     static class UpdateMemberRequest{
