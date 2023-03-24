@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.proxy.pojo.bytebuddy.ByteBuddyInterceptor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -25,7 +26,7 @@ public class Order {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member; // 연관관계의 주인
-
+    // private Member member = new ByteBuddyInterceptor(); 우리 눈에 보이지는 않지만 지연로딩일 때는 실제로 이렇게 되어 있는거임
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
 
