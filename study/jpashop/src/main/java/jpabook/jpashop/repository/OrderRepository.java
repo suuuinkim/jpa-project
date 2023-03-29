@@ -104,4 +104,25 @@ public class OrderRepository {
         ).getResultList();
     }
 
+    /**
+     * distinct를 사용한 이유는 1대다 조인이 있으므로 데이터베이스 row가 증가한다.
+     * 패치 조인 때문에 중복 조회 되는 것을 막아준다.
+     *
+     * 단점 ) 페이징 불가능
+     * 페이징 쿼리가 아예 안나감!
+     * firstResult/maxResults specified with collection fetch; applying in memory!
+     */
+    public List<Order> findAllWithItem() {
+
+        return em.createQuery(
+                "select distinct o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d" +
+                        " join fetch o.orderItems oi" +
+                        " join fetch oi.item i", Order.class
+                )
+                .setFirstResult(1)
+                .setMaxResults(100)
+                .getResultList();
+    }
 }

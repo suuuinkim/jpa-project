@@ -12,6 +12,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 컬렉션인 일대다 관계
+ * (OneToMany)를 조회
+ */
 @RestController
 @RequiredArgsConstructor
 public class OrderApiController {
@@ -49,6 +53,21 @@ public class OrderApiController {
 
         return collect;
     }
+
+    /**
+     *
+     */
+    @GetMapping("/api/v3/orders")
+    public List<OrderDto> ordersV3(){
+        List<Order> orders = orderRepository.findAllWithItem();
+
+        List<OrderDto> collect = orders.stream()
+                .map(o -> new OrderDto(o))
+                .collect(Collectors.toList());
+
+        return collect;
+    }
+
 
     @Getter
     static class OrderDto{
