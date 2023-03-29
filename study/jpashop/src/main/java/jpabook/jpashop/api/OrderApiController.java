@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -14,7 +15,12 @@ import java.util.stream.Collectors;
 
 /**
  * 컬렉션인 일대다 관계
+ * 컬렉션은 지연 로딩으로 조회하자!!!
+ * hibernate.default_batch_fetch_size: 글로벌 설정
+ * @BatchSize: 개별 최적화
+ *
  * (OneToMany)를 조회
+ * Order -> OrderItems
  */
 @RestController
 @RequiredArgsConstructor
@@ -55,11 +61,31 @@ public class OrderApiController {
     }
 
     /**
-     *
+     * 페이징이 안된다는 단점이 있다
      */
     @GetMapping("/api/v3/orders")
     public List<OrderDto> ordersV3(){
         List<Order> orders = orderRepository.findAllWithItem();
+
+        List<OrderDto> collect = orders.stream()
+                .map(o -> new OrderDto(o))
+                .collect(Collectors.toList());
+
+        return collect;
+    }
+
+    /**
+     * 쿼리 호출 수가 1 + N 1 + 1 로 최적화 된다
+     * 컬렉션 패치 조인은 페이징이 불가능 하지만 이는 사용 가능
+     * default_batch_fetch_size 고민을 어떻게 해야할까?
+     * -> 정답은 없지만 권장은 큰 숫자가 좋지만 순간 부하에 대한 고민이 된다면 100정도로 사용하는 것이 좋다
+     */
+    @GetMapping("/api/v3.1/orders")
+    public List<OrderDto> ordersV3_page(
+            @RequestParam(value = "offset", defaultValue = "0") int offset,
+            @RequestParam(value = "limit", defaultValue = "100") int limit)
+    {
+        List<Order> orders = orderRepository.findAllWithMemberDelivery(offset, limit); // 페이징에 영향을 주지 않으니까!! 일단 가져오기
 
         List<OrderDto> collect = orders.stream()
                 .map(o -> new OrderDto(o))

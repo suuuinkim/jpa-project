@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 
 /**
  * x To One(ManyToOne, OneToOne)
+ * 모두 패치조인을 하자!!!
+ *
  * Order
  * Order -> Member
  * Order -> Delivery
