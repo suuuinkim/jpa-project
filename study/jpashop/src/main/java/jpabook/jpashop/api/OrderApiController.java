@@ -6,6 +6,7 @@ import jpabook.jpashop.repository.order.query.OrderFlatDto;
 import jpabook.jpashop.repository.order.query.OrderItemQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryRepository;
+import jpabook.jpashop.service.query.OrderQueryService;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -34,9 +35,21 @@ import static java.util.stream.Collectors.*;
 public class OrderApiController {
     private final OrderRepository orderRepository;
     private final OrderQueryRepository orderQueryRepository;
+
+    /**
+     * 권장 순서
+     * 1. 엔티티 조회 방식으로 우선 접근
+     *  1) 패치조인으로 쿼리 수를 최적화
+     *  2) 컬렉션 최적화
+     *     - 페이징 필요 hibernate.default_batch_fetch_size, @BatchSize 로 최적화
+     *     - 페이징 필요 x -> 패치 조인 사용
+     *
+     *  2. 엔티티 조회 방식으로 해결이 안되면 DTO 조회 방식 아용
+     *  3. DTO 조회방식으로 해결이 안되면 NativeSQL 이나 JdbcTemplate
+     */
+
     /**
      * Order 엔티티를 노출하는 방법은 좋지 않음
-     * @return
      */
     @GetMapping("/api/v1/orders")
     public List<Order> ordersV1(){
@@ -54,7 +67,7 @@ public class OrderApiController {
     }
 
     /**
-     * 껍데이 엔티티만 노출하면 안되는 것이 아니라, 속에 있는 것까지 외부에 노출하면 안됨!
+     * 껍데기 엔티티만 노출하면 안되는 것이 아니라, 속에 있는 것까지 외부에 노출하면 안됨!
      * 쿼리가 너무 많이 사용된다는 단점이 있다
      */
     @GetMapping("/api/v2/orders")
@@ -72,6 +85,7 @@ public class OrderApiController {
      */
     @GetMapping("/api/v3/orders")
     public List<OrderDto> ordersV3(){
+
         List<Order> orders = orderRepository.findAllWithItem();
 
         List<OrderDto> collect = orders.stream()
@@ -80,6 +94,28 @@ public class OrderApiController {
 
         return collect;
     }
+
+    /**
+     * OSIV를 끈 상태로 복잡성을 관리하는 방법
+     *
+     * 장점) 지연로딩을 고민하지 않아도 된다, 코딩만 생각한다면 장점이 더 많다. (켰을때)
+     * 단점) 성능을 생각한다면 끄는게 맞음
+     *
+     * 실시간 API는 OSIV를 끄고, ADMIN 처럼 커넥션을 많이 사용하지 않는 곳에선s OSIV를 켠다.
+     */
+//    private final OrderQueryService orderQueryService;
+//    @GetMapping("/api/v3/orders")
+//    public List<jpabook.jpashop.service.query.OrderDto> ordersV3(){
+//
+//        return orderQueryService.ordersV3();
+//        List<Order> orders = orderRepository.findAllWithItem();
+//
+//        List<OrderDto> collect = orders.stream()
+//                .map(o -> new OrderDto(o))
+//                .collect(Collectors.toList());
+//
+//        return collect;
+//    }
 
     /**
      * 쿼리 호출 수가 1 + N 1 + 1 로 최적화 된다
@@ -101,17 +137,26 @@ public class OrderApiController {
         return collect;
     }
 
+    /**
+     * JPA에서 DTO를 직접 조회
+     */
     @GetMapping("/api/v4/orders")
     public List<OrderQueryDto> ordersV4(){
         return orderQueryRepository.findOrderQueryDtos();
     }
 
+    /**
+     * 컬렉션 조회 최적화 - 일대다 관계인 컬렉션은 IN 절을 활용해서 메모리에 미리 조회해서 최적화
+     */
     @GetMapping("/api/v5/orders")
     public List<OrderQueryDto> ordersV5(){
         return orderQueryRepository.findAllByDto_optimization();
 
     }
 
+    /**
+     * 플랫 데이터 최적화 - JOIN 결과를 그대로 조회 후 애플리케이션에서 원하는 모양으로 직접 변환
+     */
     @GetMapping("/api/v6/orders")
     public List<OrderQueryDto> ordersV6(){
         // return orderQueryRepository.findAllByDto_flat(); 스펙 맞추기 전
@@ -159,7 +204,7 @@ public class OrderApiController {
     }
 
     @Data
-    static class OrderItemDto{
+    public static class OrderItemDto{
 
         private String itemName; // 상품명
         private int orderPrice;
