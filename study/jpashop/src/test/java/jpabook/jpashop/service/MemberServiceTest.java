@@ -35,7 +35,7 @@ public class MemberServiceTest {
 
         //then
 //        em.flush(); // 영속성 컨테이너에 있는 내용을 데이터베이스에 반영
-        assertEquals(member, memberRepository.findOne(saveId));
+        assertEquals(member, memberRepository.findById(saveId));
     }
 
     @Test(expected = IllegalStateException.class)
