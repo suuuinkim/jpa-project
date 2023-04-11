@@ -49,4 +49,6 @@ public class MemberRepositoryTest {
         assertThat(result.size()).isEqualTo(1);
 
     }
+
+
 }

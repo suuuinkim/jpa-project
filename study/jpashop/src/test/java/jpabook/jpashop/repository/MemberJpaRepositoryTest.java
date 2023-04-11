@@ -82,7 +82,18 @@ class MemberJpaRepositoryTest {
     @Test
     public void findHelloBy() throws Exception{
         List<MemberDataJpa> helloBy = memberJpaRepository.findTop3HelloBy();
+    }
 
+    @Test
+    public void testQuery() throws Exception{
+        MemberDataJpa m1 = new MemberDataJpa("AAA", 10);
+        MemberDataJpa m2 = new MemberDataJpa("AAA", 20);
+
+        memberJpaRepository.save(m1);
+        memberJpaRepository.save(m2);
+
+        List<MemberDataJpa> result = memberJpaRepository.findUser("AAA", 10);
+        assertThat(result.get(0)).isEqualTo(m1);
     }
 
 }
