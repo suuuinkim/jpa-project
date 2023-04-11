@@ -62,5 +62,14 @@ public class MemberJpaRepository {
         return em.find(MemberDataJpa.class, id);
     }
 
+    /**
+     * 회원의 나이 기준으로 조회
+     */
+    public List<MemberDataJpa> findByUsernameAndAgeGreaterThan(String username, int age){
+        return em.createQuery("select m from MemberDataJpa m where m.username = :username and m.age > :age")
+                .setParameter("username", username)
+                .setParameter("age", age)
+                .getResultList();
+    }
 
 }

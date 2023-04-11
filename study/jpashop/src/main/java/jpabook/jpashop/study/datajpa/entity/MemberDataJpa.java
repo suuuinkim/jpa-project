@@ -16,7 +16,7 @@ public class MemberDataJpa {
     @GeneratedValue
     @Column(name ="member_id")
     private Long id;
-    private String userName;
+    private String username;
     private int age;
 
     @ManyToOne(fetch = LAZY)
@@ -31,11 +31,16 @@ public class MemberDataJpa {
 //    protected MemberDataJpa() {}
 
     public MemberDataJpa(String userName) {
-        this.userName = userName;
+        this.username = userName;
     }
 
-    public MemberDataJpa(String userName, int age, TeamDataJpa team) {
-        this.userName = userName;
+    public MemberDataJpa(String username, int age) {
+        this.username = username;
+        this.age = age;
+    }
+
+    public MemberDataJpa(String username, int age, TeamDataJpa team) {
+        this.username = username;
         this.age = age;
         if(team != null){
             changeTeam(team);
@@ -47,7 +52,7 @@ public class MemberDataJpa {
      * 메소드를 제공하는 것이 더 좋은 방법이다
      */
     public void changeUsername(String userName){
-        this.userName = userName;
+        this.username = username;
     }
 
     // ==== 연관관계를 세팅하는 메소드 ==== //

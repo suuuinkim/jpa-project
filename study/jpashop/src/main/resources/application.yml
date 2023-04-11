@@ -5,17 +5,17 @@ spring :
     password :
     driver-class-name: org.h2.Driver
 
-  jpa :
+  jpa:
     hibernate:
-      ddl-auto : create
-      #ddl-auto : none # 테이블 삭제 안하고 계속 사용 가능
+      ddl-auto: create
+    #ddl-auto : none # 테이블 삭제 안하고 계속 사용 가능
     properties:
-      hibernate :
-        #show_sql : true
-        format_sql : true
+      hibernate:
+        #        show_sql: true
+        format_sql: true
         default_batch_fetch_size: 100
     #open-in-view: false
 
 logging.level:
   org.hibernate.SQL : debug
-  org.hibernate.type : trace
+  #org.hibernate.type : trace
