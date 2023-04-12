@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
+import static jpabook.jpashop.study.datajpa.entity.QMemberDataJpa.memberDataJpa;
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
@@ -64,13 +65,40 @@ public class QuerydslBasicTest {
      */
     @Test
     public void startQuerydsl() throws Exception{
-        
-        QMemberDataJpa m = new QMemberDataJpa("m");
+
+//        QMemberDataJpa m = new QMemberDataJpa("m");
+//        QMemberDataJpa m = QMemberDataJpa.memberDataJpa;
 
         MemberDataJpa findMember = queryFactory
-                .select(m)
-                .from(m)
-                .where(m.username.eq("member1")) // 파라미터 바인딩 처리
+                .select(memberDataJpa)
+                .from(memberDataJpa)
+                .where(memberDataJpa.username.eq("member1")) // 파라미터 바인딩 처리
+                .fetchOne();
+
+        assertThat(findMember.getUsername()).isEqualTo("member1");
+
+    }
+
+    @Test
+    public void search() throws Exception{
+        MemberDataJpa findMember = queryFactory
+                .selectFrom(memberDataJpa)
+                .where(memberDataJpa.username.eq("member1")
+                        .and(memberDataJpa.age.eq(10)))
+                .fetchOne();
+
+        assertThat(findMember.getUsername()).isEqualTo("member1");
+
+    }
+
+    @Test
+    public void searchAndParam() throws Exception{
+        MemberDataJpa findMember = queryFactory
+                .selectFrom(memberDataJpa)
+                .where(
+                        memberDataJpa.username.eq("member1"),
+                        memberDataJpa.age.eq(10)
+                )
                 .fetchOne();
 
         assertThat(findMember.getUsername()).isEqualTo("member1");
