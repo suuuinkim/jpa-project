@@ -11,6 +11,7 @@ import study.datajpa.entity.Team;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -70,6 +71,25 @@ class MemberRepositoryTest {
         for (Member member : result) {
             System.out.println("member = " + member);
         }
+    }
+
+    @Test
+    public void returnType() throws Exception{
+        Member m1 = new Member("AAA", 10);
+        Member m2 = new Member("AAA", 20);
+        memberRepository.save(m1);
+        memberRepository.save(m2);
+
+//        List는 null일 가능성이 없으므로 그냥 사용하면 됨
+//        List<Member> aaa = memberRepository.findListByUsername("AAA");
+
+
+//        Member findMember = memberRepository.findMemberByUsername("asdf");
+//        System.out.println("findMember = " + findMember);
+
+        Optional<Member> optionalByUsername = memberRepository.findOptionalByUsername("AAA");
+        System.out.println("optionalByUsername = " + optionalByUsername);
+
 
 
     }
