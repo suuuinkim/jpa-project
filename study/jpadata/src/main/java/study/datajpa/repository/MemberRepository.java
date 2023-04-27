@@ -40,6 +40,9 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
     Member findMemberByUsername(String username); // 단건
     Optional<Member> findOptionalByUsername(String username); // 단건 Optional
 
-//    Page<Member> findByAge(int age, Pageable pageable);
-    Slice<Member> findByAge(int age, Pageable pageable);
+    @Query(value = "select m from Member m left join m.team t",
+            countQuery = "select count(m.username) from Member m")
+    Page<Member> findByAge(int age, Pageable pageable);
+
+//    Slice<Member> findByAge(int age, Pageable pageable);
 }

@@ -109,8 +109,10 @@ class MemberRepositoryTest {
         PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "username"));
 
         // when
-//        Page<Member> page = memberRepository.findByAge(age, pageRequest);
-          Slice<Member> page = memberRepository.findByAge(age, pageRequest); // 0부터 3개를 가지고 오라고 하면 4개를 가지고옴
+        Page<Member> page = memberRepository.findByAge(age, pageRequest);
+//          Slice<Member> page = memberRepository.findByAge(age, pageRequest); // 0부터 3개를 가지고 오라고 하면 4개를 가지고옴
+
+        Page<MemberDto> toMap = page.map(m -> new MemberDto(m.getId(), m.getUsername(), null));
 
         // then
         List<Member> content = page.getContent();
