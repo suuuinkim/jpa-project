@@ -11,6 +11,14 @@ import static lombok.AccessLevel.*;
 @Getter @Setter
 @NoArgsConstructor(access = PROTECTED) // 기본 생성자를 작성하지 않아도 기본 생성자를 생성할 수 있으며, 접근제어자를 protected로 설정
 @ToString(of = {"id", "username", "age"})
+@NamedQuery(
+        name = "Member.findByUsername",
+        query = "select m from Member m where m.username = :username"
+)
+
+@NamedEntityGraph(
+        name = "Member.all", attributeNodes = @NamedAttributeNode("team")
+)
 public class Member {
 
     @Id
