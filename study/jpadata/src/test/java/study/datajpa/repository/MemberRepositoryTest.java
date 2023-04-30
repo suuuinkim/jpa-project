@@ -212,13 +212,16 @@ class MemberRepositoryTest {
 
     @Test
     public void lock() throws Exception{
-        //given
         Member member1 = memberRepository.save(new Member("member1", 10));
         em.flush();
         em.clear();
-        //when
+
         List<Member> result = memberRepository.findLockByUsername("member1");
-
-
+        
+    }
+    
+    @Test
+    public void callCustom() throws Exception{
+        List<Member> result = memberRepository.findMemberCustom();
     }
 }
