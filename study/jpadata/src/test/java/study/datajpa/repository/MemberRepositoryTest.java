@@ -191,4 +191,34 @@ class MemberRepositoryTest {
         }
         //then
     }
+    
+    @Test
+    public void queryHint() throws Exception{
+        //given
+        Member member1 = memberRepository.save(new Member("member1", 10));
+        em.flush();
+        em.clear();
+        //when
+//        Member findMember = memberRepository.findById(member1.getId()).get();// 실무에서는 get으로 바로 꺼내서 사용하는 것은 지양
+//        findMember.setUsername("member2");
+        Member findMember = memberRepository.findReadOnlyByUsername("member1");
+        findMember.setUsername("member2");
+
+        //then
+        em.flush();
+
+    }
+
+
+    @Test
+    public void lock() throws Exception{
+        //given
+        Member member1 = memberRepository.save(new Member("member1", 10));
+        em.flush();
+        em.clear();
+        //when
+        List<Member> result = memberRepository.findLockByUsername("member1");
+
+
+    }
 }
