@@ -19,12 +19,7 @@ class ItemRepositoryTest {
 
     @Test
     public void save() throws Exception{
-        //given
-        Item item = new Item();
+        Item item = new Item("A");
         itemRepository.save(item);
-        //when
-
-        //then
-
     }
 }
