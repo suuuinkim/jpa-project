@@ -22,7 +22,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
 @Transactional
-@Rollback(false)
+//@Rollback(false)
 class MemberRepositoryTest {
 
     @Autowired
